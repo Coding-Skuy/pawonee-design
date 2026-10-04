@@ -1,0 +1,11 @@
+{
+  "name": "pawonee-design",
+  "version": "0.1.0",
+  "private": true,
+  "dependencies": {
+    "react": "19.0.0"
+  },
+  "devDependencies": {
+    "typescript": "5.7.2"
+  }
+}
