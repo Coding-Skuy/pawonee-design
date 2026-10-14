@@ -1,43 +1,38 @@
 > Versi: v1.0.0 | Status: disetujui | Menggantikan: -
 
-# 60-BLAST-RADIUS — Radius Dampak (pawonee-design)
+# 60-BLAST-RADIUS — Batas Context (pawonee-design)
 
-Mengacu: Pawonee-TownHall v1.0.0 (https://github.com/Coding-Skuy/Pawonee-TownHall).
+Mengacu: Pawonee-TownHall `platform/versions/v1.0.0` (https://github.com/Coding-Skuy/Pawonee-TownHall/tree/main/platform/versions/v1.0.0), beku 2026-10-07. Baris Pawonee townhall-roadmap §2: point of concern "12 resep inti; serapan ≥1.500 g"; batas context "G2-V/U/S; porsi 1–8 jiwa; DB `pawonee`; JWT audiens `pawonee`". Rujukan lintas divisi: KONTEKS §8/§9.
 
-## 1. Cakupan repo
+## 1. Boleh disentuh repo ini
 
-- Repo `pawonee-design`: sistem desain Pawonee. Komponen utama kartu resep dipakai aplikasi KMP dan web; data kartu mengikuti `:shared:pantry-resep` milik Pawonee (nama, menit, levelPedas, estimasiBiaya).
-- Kontrak: token di `tokens/tokens.json` adalah satu-satunya sumber warna, radius, dan tipografi; spesifikasi di `components/RecipeCard.md`; implementasi referensi `components/RecipeCard.tsx`.
+- `tokens/`, `components/*.md`, flow, aset desain, README (link Figma).
+- Spesifikasi RecipeCard, halaman publik bagi, dan cetak 1 halaman.
 
-## 2. Dampak ke hulu
+## 2. Dilarang
 
-- `:shared:pantry-resep` (milik Pawonee): perubahan model di repo ini wajib dipantulkan ke modul tersebut dan `models/schema.json`, bila tidak KMP, web, backend, dan pipa akan gagal validasi.
-- `pawonee-ai-models`: perubahan aturan grade-2 atau skema memaksa evaluasi ulang 12/12 dan migrasi data.
-- Database `pawonee`: perubahan kolom atau tabel butuh migrasi baru dan uji balik.
+- Menambah kode aplikasi/server.
+- Mengubah flow besar tanpa PRD/FSD versi baru di TownHall.
+- Mendefinisikan ulang data kartu di luar `:shared:pantry-resep` (`nama`, `menit`, `levelPedas`, `estimasiBiaya`).
+- Menyentuh DB divisi lain (DB per service; Titeny hanya read-only ke DB sumber).
+- Memakai komoditas non-pilot (kentang/wortel/tomat/kol) untuk klaim pasokan agregasi Lumbung; hanya cabai, bawang, kangkung (KONTEKS §4).
+- Menambah resep ke-13, mengubah definisi G2, atau mengubah audiens JWT tanpa PR TownHall + ADR.
 
-## 3. Dampak ke hilir (Pedaree)
+## 3. Kontrak yang diproduksi
 
-- Pedaree mengonsumsi resep, preferensi, dan topik `sinyal.pedaree.v1` dari Pawonee; perubahan kontrak tanpa pemberitahuan merusak rekomendasi pendamping Pedaree.
-- Perubahan jadwal pipa (tiap 15 menit) berpengaruh pada kesegaran sinyal Pedaree.
-- Perubahan kartu resep atau desain berpengaruh pada tampilan ringkasan Pedaree.
+- Token dan pemetaan Compose/CSS.
+- Spesifikasi RecipeCard, flow 6 layar + 5 rute web.
 
-## 4. Dampak ke dalam divisi
+## 4. Kontrak yang dikonsumsi
 
-- KMP lawan web lawan backend lawan pipa lawan desain lawan infra saling terikat pada skema yang sama; satu perubahan skema tanpa sinkronisasi memecahkan 6 repo sekaligus.
-- JWT audiens `pawonee`: perubahan audiens memutus autentikasi semua klien dan backend.
-- Migrasi web ke SvelteKit dan Bun (rencana, khusus `pawonee-web`) berdampak pada `pawonee-design` (referensi komponen) dan CI infra; karena itu migrasi dijadwalkan saat fase coding dengan kontrak dibekukan.
+- Model data kartu dari `:shared:pantry-resep` (pemilik Pawonee).
+- PRD 10/20/30 dan FSD 10 sebagai sumber flow.
 
-## 5. Mitigasi
+## 5. Dampak bila berubah
 
-1. Bekukan kontrak selama migrasi atau perubahan skema.
-2. Uji kontrak (`GET /v1/resep/rekomendasi`, preferensi, evaluasi 12/12, bangun sinyal) sebelum gabung.
-3. Beri tahu Pedaree satu siklus rilis sebelum mengubah topik atau skema.
-4. Sediakan migrasi balik untuk database `pawonee`.
-5. Catat setiap perubahan versi di `VERSIONS.md` dan TownHall Pawonee-TownHall v1.0.0.
+- Perubahan token/komponen memengaruhi `pawonee-app-kmp`, `pawonee-web`, dan tampilan ringkasan Pedaree.
 
 ## Batasan
 
-- Dokumen ini tidak mengubah kode atau konfigurasi; hanya memetakan risiko.
-- Tidak ada pengujian beban atau perubahan infrastruktur dalam dokumen ini.
-- Radius ditekankan pada konsistensi `:shared:pantry-resep`, bank 12 resep, `sinyal.pedaree.v1`, database `pawonee`, dan JWT audiens `pawonee`.
-- Keputusan darurat lintas divisi dirujuk ke TownHall Pawonee-TownHall v1.0.0.
+- Dokumen ini hanya memetakan batas dan risiko; tidak mengubah kode atau konfigurasi.
+- Keputusan lintas divisi dirujuk ke `KONTEKS-LINTAS-DIVISI.md` dan TownHall Pawonee v1.0.0.
